@@ -1,0 +1,11 @@
+{
+  "name": "pm-evaluator-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=node --target=es2020 --sourcemap"
+  },
+  "devDependencies": {
+    "esbuild": "^0.18.0"
+  }
+}

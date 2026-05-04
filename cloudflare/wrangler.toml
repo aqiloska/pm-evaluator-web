@@ -1,0 +1,17 @@
+name = "pm-evaluator-worker"
+main = "worker/dist/index.js"
+compatibility_date = "2026-04-30"
+type = "javascript"
+account_id = "cea8a6f9baa1f51b239e202e803ece7d"
+
+# Bind the D1 database (set database_name to the D1 database you create in Cloudflare)
+[[d1_databases]]
+binding = "PM_DB"
+database_name = "pm_evaluator"
+
+[build]
+command = "cd cloudflare/worker && npm ci && npm run build"
+
+[build.upload]
+# Wrangler will upload the worker bundle from this directory
+dir = "cloudflare/worker/dist"

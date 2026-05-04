@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Development of a decision support framework for project manager selection and evaluation in Malaysia</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-grid">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Decision Support Framework</h1>
+        <p class="subtitle">Project Manager Selection & Evaluation (Malaysia)</p>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li class="active" data-section="dashboard"><span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span></li>
+          <li data-section="form"><span class="nav-icon">✏️</span><span class="nav-label">New Evaluation</span></li>
+          <li data-section="evaluations"><span class="nav-icon">📁</span><span class="nav-label">Evaluations</span></li>
+          <li data-section="reports"><span class="nav-icon">📊</span><span class="nav-label">Reports</span></li>
+          <li data-section="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></li>
+          <li data-section="flowchart"><span class="nav-icon">🧭</span><span class="nav-label">Flowchart</span></li>
+        </ul>
+      </nav>
+
+      <section class="about">
+        <h3>About the system</h3>
+        <p>This system implements the flowchart-based evaluation: input candidate data, validation, profession comparison, criteria weighting, scoring, decision engine, certification recommendation, and save/export.</p>
+        <p>Use the form to add candidate profiles. The dashboard shows aggregated stats and trends.</p>
+      </section>
+
+      <section class="flow-image">
+        <img src="/flowchart.png" alt="flowchart" />
+      </section>
+
+      <footer class="side-foot">Developed for research & evaluation • Malaysia</footer>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="title">Development of a decision support framework for project manager selection and evaluation in Malaysia</div>
+        <div class="controls">
+          <button id="refreshBtn">Refresh</button>
+        </div>
+      </header>
+
+      <section id="topCards" class="top-cards">
+        <div class="card" id="cardTotal">
+          <div class="label">Total Evaluations</div>
+          <div class="value" id="totalCount">—</div>
+        </div>
+        <div class="card" id="cardAvg">
+          <div class="label">Average Score</div>
+          <div class="value" id="avgScore">—</div>
+        </div>
+        <div class="card" id="cardRecent">
+          <div class="label">Most Recent</div>
+          <div class="value" id="recentName">—</div>
+        </div>
+      </section>
+
+      <section id="dashboard" class="dashboard section-active">
+        <div class="left">
+          <div class="panel small">
+            <h3>Position Distribution</h3>
+            <canvas id="pieChart" height="200"></canvas>
+          </div>
+
+          <div class="panel small">
+            <h3>Average Criteria Scores</h3>
+            <canvas id="barChart" height="200"></canvas>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="panel small">
+            <h3>Score Over Time</h3>
+            <canvas id="lineChart" height="160"></canvas>
+          </div>
+
+          <div class="panel small">
+            <h3>Latest Evaluations</h3>
+            <ul id="latestList" class="list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="evaluations" class="panel hidden">
+        <h2>Saved Evaluations</h2>
+        <div id="evalTable"></div>
+      </section>
+
+      <section id="reports" class="panel hidden">
+        <h2>Reports</h2>
+        <p>Generate and save aggregated reports of evaluations.</p>
+        <div style="margin-top:12px">
+          <button id="saveReportBtn" class="primary">Save Report (JSON)</button>
+        </div>
+      </section>
+
+      <section id="settings" class="panel hidden">
+        <h2>Settings</h2>
+        <p>Configure criteria defaults and system preferences.</p>
+      </section>
+
+      <section id="form" class="form-section panel">
+        <h2>New Candidate Evaluation</h2>
+        <form id="candidateForm">
+          <div class="form-row">
+            <label>Name <input id="name" type="text" required></label>
+            <label>Years <input id="years" type="number" value="3" min="0" max="50"></label>
+            <label>Education
+              <select id="education">
+                <option>High School</option>
+                <option>Bachelor</option>
+                <option selected>Master</option>
+                <option>PhD</option>
+              </select>
+            </label>
+            <label>Certification
+              <select id="cert">
+                <option selected>None</option>
+                <option>CAPM</option>
+                <option>PMP</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="skills-grid">
+            <label>Leadership <input class="skill" data-skill="leadership" type="number" min="0" max="5" value="4"></label>
+            <label>Risk Management <input class="skill" data-skill="risk" type="number" min="0" max="5" value="3"></label>
+            <label>Cost Control <input class="skill" data-skill="cost" type="number" min="0" max="5" value="3"></label>
+            <label>Communication <input class="skill" data-skill="comm" type="number" min="0" max="5" value="4"></label>
+          </div>
+
+          <div class="weights-row">
+            <label>Experience <input id="w_exp" type="range" min="0" max="100" value="40"><span id="w_exp_val">40%</span></label>
+            <label>Certification <input id="w_cert" type="range" min="0" max="100" value="30"><span id="w_cert_val">30%</span></label>
+            <label>Skills <input id="w_skills" type="range" min="0" max="100" value="20"><span id="w_skills_val">20%</span></label>
+            <label>Education <input id="w_edu" type="range" min="0" max="100" value="10"><span id="w_edu_val">10%</span></label>
+          </div>
+
+          <div class="form-actions">
+            <button id="validateBtn" type="button">Validate</button>
+            <button id="scoreBtn" type="button" class="primary">Calculate & Save</button>
+            <button id="exportBtn" type="button">Export JSON</button>
+            <button id="resetBtn" type="button">Reset</button>
+          </div>
+        </form>
+      </section>
+
+            <section id="flowchart" class="panel hidden">
+        <h2>System Flowchart</h2>
+        <img src="/flowchart.png" alt="flowchart" style="width:100%;border-radius:8px"/>
+      </section>
+
+      <footer class="app-foot">© Development of a decision support framework for project manager selection and evaluation in Malaysia</footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dist/app.js"></script>
+  </div>
+</body>
+</html>

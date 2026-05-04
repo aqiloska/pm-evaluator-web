@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Project Manager Selection & Evaluation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>PM Selection & Evaluation</h1>
+      <p class="subtitle">Fill candidate data, validate, score and get recommendation.</p>
+    </header>
+
+    <main>
+      <section class="left">
+        <form id="candidateForm">
+          <h2>1. Input Candidate Data</h2>
+          <label>Name<input type="text" id="name" required></label>
+          <label>Years of Experience<input type="number" id="years" min="0" max="50" value="3" required></label>
+          <label>Education
+            <select id="education">
+              <option value="High School">High School</option>
+              <option value="Bachelor">Bachelor</option>
+              <option value="Master" selected>Master</option>
+              <option value="PhD">PhD</option>
+            </select>
+          </label>
+          <label>Certification
+            <select id="cert">
+              <option value="None" selected>None</option>
+              <option value="CAPM">CAPM</option>
+              <option value="PMP">PMP</option>
+            </select>
+          </label>
+
+          <h3>Skills (rate 0-5)</h3>
+          <div class="skills">
+            <label>Leadership<input type="number" class="skill" data-skill="leadership" min="0" max="5" value="4"></label>
+            <label>Risk Management<input type="number" class="skill" data-skill="risk" min="0" max="5" value="3"></label>
+            <label>Cost Control<input type="number" class="skill" data-skill="cost" min="0" max="5" value="3"></label>
+            <label>Communication<input type="number" class="skill" data-skill="comm" min="0" max="5" value="4"></label>
+          </div>
+
+          <h2>2. Criteria Weight Assignment</h2>
+          <div class="weights">
+            <label>Experience <input type="range" id="w_exp" min="0" max="100" value="40"> <span id="w_exp_val">40%</span></label>
+            <label>Certification <input type="range" id="w_cert" min="0" max="100" value="30"> <span id="w_cert_val">30%</span></label>
+            <label>Skills <input type="range" id="w_skills" min="0" max="100" value="20"> <span id="w_skills_val">20%</span></label>
+            <label>Education <input type="range" id="w_edu" min="0" max="100" value="10"> <span id="w_edu_val">10%</span></label>
+          </div>
+
+          <div class="actions">
+            <button id="validateBtn" type="button">Validate</button>
+            <button id="scoreBtn" type="button" class="primary">Calculate Score</button>
+            <button id="saveBtn" type="button">Save</button>
+            <button id="exportBtn" type="button">Export JSON</button>
+            <button id="resetBtn" type="button">Reset</button>
+          </div>
+        </form>
+
+        <section class="profComp">
+          <h2>Profession Comparison Module</h2>
+          <table>
+            <thead><tr><th>Profession</th><th>License/Regulation</th></tr></thead>
+            <tbody>
+              <tr><td>Lawyer</td><td>Yes (Bar Council)</td></tr>
+              <tr><td>Doctor</td><td>Yes (MMC)</td></tr>
+              <tr><td>Accountant</td><td>Yes (MIA)</td></tr>
+              <tr><td>Project Manager (PM)</td><td>No (Non-regulated)</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <aside class="right">
+        <section class="results">
+          <h2>Output Result</h2>
+          <div id="outCard" class="card empty">
+            <p class="emptyTxt">No result yet — validate and calculate to see evaluation.</p>
+          </div>
+        </section>
+
+        <section class="recommend">
+          <h3>Decision Engine</h3>
+          <ul>
+            <li>&gt;= 80: Senior Project Manager</li>
+            <li>60 - 79: Project Manager</li>
+            <li>40 - 59: Junior Project Manager</li>
+            <li>&lt; 40: Not Qualified</li>
+          </ul>
+        </section>
+
+      </aside>
+    </main>
+
+    <footer>
+      <small>Local demo — data saved in browser storage. Export to download.</small>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
