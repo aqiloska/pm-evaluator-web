@@ -1,0 +1,21 @@
+
+> pm-evaluator-web@1.0.0 dev
+> next dev -p 5181
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:5181
+- Network:       http://100.75.216.8:5181
+✓ Ready in 732ms
+Creating turbopack project { dir: 'C:\\Users\\User\\pm-evaluator-web', testMode: true }
+
+ GET / 200 in 308ms (next.js: 170ms, application-code: 138ms)
+ GET /api/stats 200 in 106ms (next.js: 80ms, application-code: 26ms)
+ GET /api/evaluations 200 in 135ms (next.js: 130ms, application-code: 5ms)
+ GET /api/stats 200 in 11ms (next.js: 4ms, application-code: 8ms)
+ GET / 200 in 49ms (next.js: 4ms, application-code: 44ms)
+ GET /api/evaluations 200 in 6ms (next.js: 1940µs, application-code: 4ms)
+ GET /api/stats 200 in 8ms (next.js: 3ms, application-code: 5ms)
+ GET / 200 in 32ms (next.js: 3ms, application-code: 28ms)
+ GET / 200 in 40ms (next.js: 3ms, application-code: 36ms)
+ GET /api/stats 200 in 8ms (next.js: 3ms, application-code: 5ms)
+ GET /api/evaluations 200 in 15ms (next.js: 10ms, application-code: 5ms)

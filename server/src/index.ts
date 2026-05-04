@@ -79,6 +79,20 @@ app.get('/api/evaluations', (req,res)=>{
   res.json(parsed);
 });
 
+app.delete('/api/evaluations/:id', (req,res)=>{
+  try{
+    const id = Number(req.params.id);
+    if(!Number.isInteger(id) || id <= 0){
+      return res.status(400).json({error:'Invalid evaluation id'});
+    }
+    const info = db.prepare('DELETE FROM evaluations WHERE id = ?').run(id);
+    res.json({deleted: info.changes});
+  }catch(err){
+    console.error(err);
+    res.status(500).json({error:'Failed to delete'});
+  }
+});
+
 app.get('/api/stats', (req,res)=>{
   const totalCount = db.prepare('SELECT COUNT(*) as c FROM evaluations').get().c;
   const avgRow = db.prepare('SELECT AVG(total) as avg FROM evaluations').get();

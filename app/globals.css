@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f1f5f9;
+}
+
+@layer components {
+  .field {
+    @apply w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-blue-100;
+  }
+
+  .primary-button {
+    @apply rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700;
+  }
+
+  .secondary-button {
+    @apply rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50;
+  }
+}
