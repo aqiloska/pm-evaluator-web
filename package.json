@@ -6,12 +6,15 @@
     "dev": "next dev -p 5181",
     "build": "next build",
     "start": "next start -p 5181",
+    "preview": "opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare deploy",
     "test": "echo \"No tests configured\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.19.6",
     "better-sqlite3": "^12.9.0",
     "jspdf": "^4.2.1",
     "next": "^16.0.1",
