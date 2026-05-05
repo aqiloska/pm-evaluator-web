@@ -1,6 +1,8 @@
 'use client';
 
+// import { useEffect, useMemo, useState } from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import jsPDF from 'jspdf';
 
 type Scores = {
   experience: number;
@@ -90,16 +92,170 @@ function decidePosition(total: number) {
   return 'Not Qualified';
 }
 
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+// function downloadJson(filename: string, data: unknown) {
+//   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+//   const url = URL.createObjectURL(blob);
+//   const link = document.createElement('a');
+//   link.href = url;
+//   link.download = filename;
+//   document.body.appendChild(link);
+//   link.click();
+//   link.remove();
+//   URL.revokeObjectURL(url);
+// }
+
+// function downloadPDF(filename: string, data: any) {
+//   const doc = new jsPDF();
+
+//   let y = 10;
+
+//   doc.setFontSize(16);
+//   doc.text("PM Evaluator Report", 10, y);
+//   y += 10;
+
+//   doc.setFontSize(10);
+//   doc.text(`Generated: ${new Date().toLocaleString()}`, 10, y);
+//   y += 10;
+
+//   // Stats
+//   doc.text(`Total Evaluations: ${data.stats.totalCount}`, 10, y);
+//   y += 6;
+//   doc.text(`Average Score: ${data.stats.avg}`, 10, y);
+//   y += 10;
+
+//   // Evaluations
+//   doc.setFontSize(12);
+//   doc.text("Evaluations:", 10, y);
+//   y += 8;
+
+//   data.evaluations.forEach((ev: any, index: number) => {
+//     if (y > 270) {
+//       doc.addPage();
+//       y = 10;
+//     }
+
+//     doc.setFontSize(10);
+//     doc.text(`${index + 1}. ${ev.name}`, 10, y);
+//     y += 5;
+
+//     doc.text(`Score: ${ev.total} | Position: ${ev.position}`, 10, y);
+//     y += 5;
+
+//     doc.text(`Experience: ${ev.years} years`, 10, y);
+//     y += 8;
+//   });
+
+//   doc.save(filename);
+// }
+
+function downloadPDF(filename: string, data: any) {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 20;
+
+  // HEADER
+  doc.setFillColor(21, 94, 239);
+  doc.rect(0, 0, pageWidth, 30, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.text("PM Evaluator Report", 14, 18);
+
+  doc.setFontSize(10);
+  doc.text("Professional Candidate Assessment", 14, 24);
+
+  doc.setTextColor(0, 0, 0);
+  y = 40;
+
+  // SUMMARY BOX
+  doc.setDrawColor(200);
+  doc.rect(14, y, pageWidth - 28, 30);
+
+  doc.setFontSize(12);
+  doc.text("Executive Summary", 16, y + 8);
+
+  doc.setFontSize(10);
+  doc.text(`Total Evaluations: ${data.stats.totalCount}`, 16, y + 16);
+  doc.text(`Average Score: ${data.stats.avg}`, 16, y + 22);
+  doc.text(`Generated: ${new Date().toLocaleString()}`, 110, y + 16);
+
+  y += 40;
+
+  // TABLE HEADER
+  doc.setFillColor(240, 240, 240);
+  doc.rect(14, y, pageWidth - 28, 8, "F");
+
+  doc.setFontSize(11);
+  doc.text("No", 16, y + 6);
+  doc.text("Name", 30, y + 6);
+  doc.text("Score", 90, y + 6);
+  doc.text("Position", 115, y + 6);
+  doc.text("Exp", 165, y + 6);
+
+  y += 10;
+
+  // TABLE DATA
+  data.evaluations.forEach((ev: any, index: number) => {
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+
+    if (index % 2 === 0) {
+      doc.setFillColor(250, 250, 250);
+      doc.rect(14, y - 4, pageWidth - 28, 8, "F");
+    }
+
+    doc.setFontSize(10);
+    doc.text(String(index + 1), 16, y);
+    doc.text(ev.name || "-", 30, y);
+    doc.text(String(ev.total), 90, y);
+    doc.text(ev.position || "-", 115, y);
+    doc.text(`${ev.years} yrs`, 165, y);
+
+    y += 8;
+  });
+
+  y += 10;
+
+  // DETAIL SECTION
+  doc.setFontSize(12);
+  doc.text("Top Candidates Detail", 14, y);
+  y += 8;
+
+  data.evaluations.slice(0, 3).forEach((ev: any) => {
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.setDrawColor(220);
+    doc.rect(14, y, pageWidth - 28, 28);
+
+    doc.setFontSize(11);
+    doc.text(`Name: ${ev.name}`, 16, y + 8);
+
+    doc.setFontSize(10);
+    doc.text(`Score: ${ev.total}`, 16, y + 14);
+    doc.text(`Position: ${ev.position}`, 16, y + 20);
+
+    doc.text(`Experience: ${ev.years} yrs`, 100, y + 14);
+    doc.text(`Education: ${ev.education}`, 100, y + 20);
+
+    y += 34;
+  });
+
+  // FOOTER
+  const totalPages = doc.getNumberOfPages();
+
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.setTextColor(150);
+    doc.text(`Page ${i} of ${totalPages}`, pageWidth - 40, 290);
+  }
+
+  doc.save(filename);
 }
 
 function MetricCard({ label, value }: { label: string; value: string | number }) {
@@ -577,7 +733,11 @@ export default function Page() {
                   onClick={() => {
                     const latestJson = localStorage.getItem('pm_latest');
                     if (!latestJson) alert('No latest result to export');
-                    else downloadJson('evaluation.json', JSON.parse(latestJson));
+                    // else downloadJson('evaluation.json', JSON.parse(latestJson));
+                    else downloadPDF('evaluation.pdf', {
+                    stats,
+                    evaluations: [JSON.parse(latestJson)]
+                  });
                   }}
                   className="secondary-button"
                 >
@@ -601,13 +761,19 @@ export default function Page() {
         {active === 'reports' ? (
           <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-semibold text-ink">Reports</h2>
-            <p className="mt-2 text-sm text-slate-600">Export all saved evaluations and dashboard statistics as JSON.</p>
+            <p className="mt-2 text-sm text-slate-600">Export all saved evaluations and dashboard statistics as PDF.</p>
             <button
               type="button"
-              onClick={() => downloadJson('pm-evaluator-report.json', { generatedAt: new Date().toISOString(), stats, evaluations })}
+              // onClick={() => downloadJson('pm-evaluator-report.json', { generatedAt: new Date().toISOString(), stats, evaluations })}
+              onClick={() =>
+              downloadPDF('pm-evaluator-report.pdf', {
+                stats,
+                evaluations
+              })
+            }
               className="primary-button mt-4"
             >
-              Save Report JSON
+              Save Report PDF
             </button>
           </section>
         ) : null}
