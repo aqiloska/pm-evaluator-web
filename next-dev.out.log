@@ -104,3 +104,25 @@ Creating turbopack project { dir: 'C:\\Users\\User\\pm-evaluator-web', testMode:
  GET /api/evaluations 200 in 60ms (next.js: 56ms, application-code: 4ms)
  GET /api/stats 200 in 8ms (next.js: 2ms, application-code: 5ms)
  GET /api/evaluations 200 in 5ms (next.js: 1889µs, application-code: 3ms)
+✓ Compiled in 1750ms
+✓ Compiled in 497ms
+ GET / 200 in 777ms (next.js: 735ms, application-code: 42ms)
+✓ Compiled in 1642ms
+✓ Compiled in 38ms
+✓ Compiled in 37ms
+✓ Compiled in 33ms
+ GET / 200 in 157ms (next.js: 85ms, application-code: 72ms)
+ GET / 200 in 62ms (next.js: 4ms, application-code: 58ms)
+ GET / 200 in 28ms (next.js: 3ms, application-code: 25ms)
+ GET / 200 in 71ms (next.js: 4ms, application-code: 67ms)
+ GET / 200 in 44ms (next.js: 5ms, application-code: 39ms)
+ GET / 200 in 23ms (next.js: 4ms, application-code: 18ms)
+ GET / 200 in 157ms (next.js: 2ms, application-code: 155ms)
+ GET /api/stats 200 in 81ms (next.js: 71ms, application-code: 10ms)
+ GET /api/evaluations 200 in 37ms (next.js: 33ms, application-code: 4ms)
+✓ Compiled in 61ms
+ GET / 200 in 114ms (next.js: 63ms, application-code: 51ms)
+ GET / 200 in 30ms (next.js: 3ms, application-code: 27ms)
+ GET / 200 in 102ms (next.js: 2ms, application-code: 99ms)
+ GET /api/stats 200 in 41ms (next.js: 34ms, application-code: 7ms)
+ GET /api/evaluations 200 in 65ms (next.js: 61ms, application-code: 4ms)
