@@ -1,20 +1,26 @@
 import { NextResponse } from 'next/server';
-import db from '../../../lib/db';
+import { pool } from '../../../lib/db';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
-  const totalRow = db.prepare('SELECT COUNT(*) as c, AVG(total) as avg FROM evaluations').get() as any;
-  const distRows = db.prepare('SELECT position, COUNT(*) as c FROM evaluations GROUP BY position').all() as any[];
+  const total = await pool.query(
+    'SELECT COUNT(*) as c, AVG(total) as avg FROM evaluations'
+  );
+
+  const dist = await pool.query(
+    'SELECT position, COUNT(*) as c FROM evaluations GROUP BY position'
+  );
+
   const distribution: Record<string, number> = {};
 
-  distRows.forEach((row) => {
-    distribution[row.position || 'Unknown'] = row.c;
+  dist.rows.forEach((r) => {
+    distribution[r.position] = Number(r.c);
   });
 
   return NextResponse.json({
-    totalCount: totalRow?.c || 0,
-    avg: Math.round(totalRow?.avg || 0),
+    totalCount: Number(total.rows[0].c),
+    avg: Math.round(Number(total.rows[0].avg || 0)),
     distribution,
   });
 }

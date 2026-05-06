@@ -1,5 +1,4 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { Pool } from 'pg';
 
 export type Evaluation = {
   id: number;
@@ -17,37 +16,16 @@ export type Evaluation = {
 };
 
 type RawEvaluation = Omit<Evaluation, 'skills' | 'weights' | 'scores' | 'certSuggest'> & {
-  skills: string;
-  weights: string;
-  scores: string;
-  certSuggest: string;
+  skills: any;
+  weights: any;
+  scores: any;
+  certSuggest: any;
 };
 
-const dbPath = path.join(process.cwd(), 'pm-evaluator.db');
-const db = new Database(dbPath);
-
-db.prepare(`CREATE TABLE IF NOT EXISTS evaluations (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  years INTEGER,
-  education TEXT,
-  cert TEXT,
-  skills TEXT,
-  weights TEXT,
-  scores TEXT,
-  total INTEGER,
-  position TEXT,
-  certSuggest TEXT,
-  timestamp TEXT
-)`).run();
-
-function parseJson<T>(value: string | null | undefined, fallback: T): T {
-  try {
-    return value ? JSON.parse(value) : fallback;
-  } catch {
-    return fallback;
-  }
-}
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
 export function decidePosition(total: number) {
   if (total >= 80) return 'Senior Project Manager';
@@ -59,11 +37,9 @@ export function decidePosition(total: number) {
 export function normalizeEvaluation(row: RawEvaluation): Evaluation {
   return {
     ...row,
-    skills: parseJson(row.skills, {}),
-    weights: parseJson(row.weights, {}),
-    scores: parseJson(row.scores, {}),
-    certSuggest: parseJson(row.certSuggest, []),
+    skills: row.skills ?? {},
+    weights: row.weights ?? {},
+    scores: row.scores ?? {},
+    certSuggest: row.certSuggest ?? [],
   };
 }
-
-export default db;

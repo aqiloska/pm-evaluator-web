@@ -1,39 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db, { decidePosition, normalizeEvaluation } from '../../../lib/db';
+import { pool, decidePosition, normalizeEvaluation } from '../../../lib/db';
 
 export const runtime = 'nodejs';
 
+// GET
 export async function GET() {
-  const rows = db.prepare('SELECT * FROM evaluations ORDER BY id DESC LIMIT 200').all();
-  return NextResponse.json(rows.map((row: any) => normalizeEvaluation(row)));
+  const res = await pool.query(
+    'SELECT * FROM evaluations ORDER BY id DESC LIMIT 200'
+  );
+  return NextResponse.json(res.rows.map(normalizeEvaluation));
 }
 
-export async function POST(request: NextRequest) {
+// POST
+export async function POST(req: NextRequest) {
   try {
-    const payload = await request.json();
-    const stmt = db.prepare(`INSERT INTO evaluations
+    const body = await req.json();
+    const total = Number(body.total || 0);
+
+    const result = await pool.query(
+      `INSERT INTO evaluations
       (name, years, education, cert, skills, weights, scores, total, position, certSuggest, timestamp)
-      VALUES (@name,@years,@education,@cert,@skills,@weights,@scores,@total,@position,@certSuggest,@timestamp)`);
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+      RETURNING *`,
+      [
+        body.name,
+        body.years,
+        body.education,
+        body.cert,
+        body.skills,
+        body.weights,
+        body.scores,
+        total,
+        decidePosition(total),
+        body.certSuggest,
+        new Date().toISOString(),
+      ]
+    );
 
-    const total = Number(payload.total || 0);
-    const info = stmt.run({
-      name: payload.name || '',
-      years: Number(payload.years || 0),
-      education: payload.education || '',
-      cert: payload.cert || '',
-      skills: JSON.stringify(payload.skills || {}),
-      weights: JSON.stringify(payload.weights || {}),
-      scores: JSON.stringify(payload.scores || {}),
-      total,
-      position: payload.position || decidePosition(total),
-      certSuggest: JSON.stringify(payload.certSuggest || []),
-      timestamp: new Date().toISOString(),
-    });
-
-    const row = db.prepare('SELECT * FROM evaluations WHERE id = ?').get(info.lastInsertRowid);
-    return NextResponse.json(normalizeEvaluation(row as any));
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Failed to save evaluation' }, { status: 500 });
+    return NextResponse.json(normalizeEvaluation(result.rows[0]));
+  } catch (e) {
+    return NextResponse.json({ error: 'Insert failed' }, { status: 500 });
   }
 }

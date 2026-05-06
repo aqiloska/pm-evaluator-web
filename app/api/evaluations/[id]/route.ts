@@ -1,23 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import db from '../../../../lib/db';
+import { NextResponse } from 'next/server';
+import { pool } from '../../../../lib/db';
 
 export const runtime = 'nodejs';
 
 export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  _: Request,
+  { params }: { params: { id: string } }
 ) {
-  try {
-    const { id: rawId } = await params;
-    const id = Number(rawId);
-    if (!Number.isInteger(id) || id <= 0) {
-      return NextResponse.json({ error: 'Invalid evaluation id' }, { status: 400 });
-    }
+  const id = Number(params.id);
 
-    const info = db.prepare('DELETE FROM evaluations WHERE id = ?').run(id);
-    return NextResponse.json({ deleted: info.changes });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Failed to delete evaluation' }, { status: 500 });
-  }
+  const res = await pool.query(
+    'DELETE FROM evaluations WHERE id = $1',
+    [id]
+  );
+
+  return NextResponse.json({ deleted: res.rowCount });
 }
